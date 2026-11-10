@@ -62,7 +62,6 @@ class Workspace : public QObject {
     Q_PROPERTY(QStringList recent READ recent NOTIFY recentChanged)
     Q_PROPERTY(FileTree *tree READ tree CONSTANT)
     Q_PROPERTY(QString message READ message NOTIFY messageChanged)
-    Q_PROPERTY(int fontSize READ fontSize WRITE setFontSize NOTIFY fontSizeChanged)
 
 public:
     explicit Workspace(const QString &settingsFile = {}, QObject *parent = nullptr);
@@ -73,14 +72,6 @@ public:
     QStringList recent() const;
     FileTree *tree() { return &m_tree; }
     QString message() const { return m_message; }
-    int fontSize() const { return m_settings.value("editor/fontSize", 14).toInt(); }
-    void setFontSize(int size) {
-        size = qBound(9, size, 32);
-        if (size == fontSize())
-            return;
-        m_settings.setValue("editor/fontSize", size);
-        emit fontSizeChanged();
-    }
 
     // Opens a folder, or the project around a file (its git root, or its
     // folder). Returns the file to open, if a file was given.
@@ -104,7 +95,6 @@ signals:
     void branchChanged();
     void recentChanged();
     void messageChanged();
-    void fontSizeChanged();
     void folderPicked(const QString &path);
 
 private slots:

@@ -20,7 +20,7 @@ Rectangle {
     function show(withReplace) {
         replacing = withReplace
         visible = true
-        if (editor && editor.textEdit.selectedText && editor.textEdit.selectedText.indexOf(" ") < 0)
+        if (editor && editor.textEdit.selectedText && editor.textEdit.selectedText.indexOf(String.fromCharCode(0x2029)) < 0)
             query.text = editor.textEdit.selectedText
         query.forceActiveFocus()
         query.selectAll()

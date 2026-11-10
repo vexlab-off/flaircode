@@ -10,5 +10,11 @@
         <file alias="Icon.qml">Icon.qml</file>
         <file alias="Keycap.qml">Keycap.qml</file>
         <file alias="brands.js">brands.js</file>
+        <file alias="ImageView.qml">ImageView.qml</file>
+        <file alias="PreviewPane.qml">PreviewPane.qml</file>
+        <file alias="CommandPalette.qml">CommandPalette.qml</file>
+        <file alias="AssistantPanel.qml">AssistantPanel.qml</file>
+        <file alias="InlineEdit.qml">InlineEdit.qml</file>
+        <file alias="SettingsDialog.qml">SettingsDialog.qml</file>
     </qresource>
 </RCC>

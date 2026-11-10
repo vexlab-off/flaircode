@@ -9,7 +9,7 @@
 class Highlighter;
 class QQuickTextDocument;
 class QTextDocument;
-class Theme;
+class ColorScheme;
 
 // One open file. The editor's QTextDocument holds the text and its undo
 // history; this object loads it, saves it atomically, and says whether it
@@ -24,9 +24,13 @@ class Document : public QObject {
     Q_PROPERTY(bool dirty READ dirty NOTIFY dirtyChanged)
     Q_PROPERTY(bool changedOnDisk READ changedOnDisk NOTIFY changedOnDiskChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    // Pictures open in a viewer tab rather than as text.
+    Q_PROPERTY(bool isImage READ isImage CONSTANT)
+    // HTML, SVG and Markdown can be previewed live beside the code.
+    Q_PROPERTY(bool previewable READ previewable CONSTANT)
 
 public:
-    Document(const QString &path, Theme *theme, QObject *parent = nullptr);
+    Document(const QString &path, ColorScheme *scheme, QObject *parent = nullptr);
 
     QString path() const { return m_path; }
     QString name() const;
@@ -35,11 +39,19 @@ public:
     QString commentToken() const { return commentFor(m_language); }
     bool dirty() const;
     bool changedOnDisk() const { return m_changedOnDisk; }
+    bool isImage() const { return isImageFile(m_path); }
+    bool previewable() const;
+    static bool isImageFile(const QString &path);
     QString error() const { return m_error; }
 
     // Called by the editor once its text document exists.
     Q_INVOKABLE void attach(QQuickTextDocument *document);
-    Q_INVOKABLE bool save();
+    // Optionally trims trailing spaces and ensures a final newline first, as
+    // one undoable step.
+    Q_INVOKABLE bool save(bool trimTrailing = false, bool finalNewline = false);
+    // 0-based line and column of a cursor position, from the document's blocks.
+    Q_INVOKABLE int lineAt(int position) const;
+    Q_INVOKABLE int columnAt(int position) const;
     Q_INVOKABLE void reload();
     // Attach to a plain QTextDocument (tests, and the work attach() does).
     void attachDocument(QTextDocument *document);
@@ -54,6 +66,8 @@ signals:
     void changedOnDiskChanged();
     void errorChanged();
     void saved();
+    // The file was read again from disk (an image viewer reloads its picture).
+    void reloaded();
 
 private:
     bool load();
@@ -61,7 +75,7 @@ private:
 
     QString m_path;
     QString m_language;
-    Theme *m_theme;
+    ColorScheme *m_scheme;
     QPointer<QTextDocument> m_document;
     Highlighter *m_highlighter = nullptr;
     QFileSystemWatcher m_watcher;
@@ -81,7 +95,7 @@ class DocumentList : public QAbstractListModel {
 public:
     enum Role { DocumentRole = Qt::UserRole + 1, NameRole, PathRole, DirtyRole, LanguageRole };
 
-    explicit DocumentList(Theme *theme, QObject *parent = nullptr);
+    explicit DocumentList(ColorScheme *scheme, QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = {}) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -106,7 +120,7 @@ signals:
     void dirtyCountChanged();
 
 private:
-    Theme *m_theme;
+    ColorScheme *m_scheme;
     QVector<Document *> m_documents;
     int m_current = -1;
 };

@@ -1,6 +1,6 @@
 #include "highlighter.h"
 
-#include "theme.h"
+#include "colorscheme.h"
 
 static QRegularExpression rx(const QString &pattern) {
     return QRegularExpression(pattern);
@@ -10,10 +10,10 @@ static QString words(const QStringList &list) {
     return "\\b(?:" + list.join('|') + ")\\b";
 }
 
-Highlighter::Highlighter(const QString &language, Theme *theme, QTextDocument *document)
-    : QSyntaxHighlighter(document), m_grammar(grammarFor(language)), m_theme(theme) {
+Highlighter::Highlighter(const QString &language, ColorScheme *scheme, QTextDocument *document)
+    : QSyntaxHighlighter(document), m_grammar(grammarFor(language)), m_scheme(scheme) {
     refreshColors();
-    connect(theme, &Theme::changed, this, [this] {
+    connect(scheme, &ColorScheme::changed, this, [this] {
         refreshColors();
         rehighlight();
     });
@@ -24,19 +24,11 @@ void Highlighter::refreshColors() {
     for (const auto &role : {"keyword", "string", "number", "comment", "function", "type", "tag", "attribute",
                              "constant", "heading", "preprocessor", "operator", "emphasis", "strong"}) {
         QTextCharFormat format;
-        const QString r(role);
-        if (r == "emphasis") {
-            format.setFontItalic(true);
-        } else if (r == "strong") {
+        format.setForeground(m_scheme->color(role));
+        format.setFontItalic(m_scheme->italic(role));
+        if (m_scheme->bold(role))
             format.setFontWeight(QFont::Bold);
-        } else {
-            format.setForeground(m_theme->syntax(r));
-        }
-        if (r == "comment")
-            format.setFontItalic(true);
-        if (r == "heading")
-            format.setFontWeight(QFont::Bold);
-        m_formats.insert(r, format);
+        m_formats.insert(role, format);
     }
 }
 

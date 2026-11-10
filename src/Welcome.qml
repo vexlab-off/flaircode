@@ -29,7 +29,9 @@ Rectangle {
             spacing: 10
             Text { text: workspace.name; color: theme.text; font.pixelSize: 16; font.weight: Font.DemiBold }
             Repeater {
-                model: [["Ctrl+P", "Aller à un fichier"], ["Ctrl+N", "Nouveau fichier"], ["Ctrl+B", "Afficher ou masquer l'arborescence"], ["F1", "Tous les raccourcis"]]
+                model: [["Ctrl+P", "Aller à un fichier"], ["Ctrl+N", "Nouveau fichier"], ["Ctrl+Maj+P", "Toutes les commandes, par leur nom"],
+                        ["Ctrl+L", "Assistant IA (Claude, OpenAI, Gemini, local)"], ["Ctrl+K", "Réécrire une sélection avec l'IA"],
+                        ["Ctrl+Maj+V", "Aperçu en direct (HTML, SVG, Markdown, images)"], ["Ctrl+,", "Réglages et couleurs"], ["F1", "Aide, snippets et astuces"]]
                 delegate: RowLayout {
                     required property var modelData
                     spacing: 12
@@ -55,6 +57,7 @@ Rectangle {
                 }
                 Button { text: "Ouvrir un chemin…"; flat: true; onClicked: prompt.ask("path") }
                 Keycap { text: "Ctrl+O" }
+                Keycap { text: "Ctrl+Maj+O" }
             }
             Text {
                 visible: workspace.recent.length > 0

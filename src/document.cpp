@@ -1,17 +1,20 @@
 #include "document.h"
 
 #include "highlighter.h"
-#include "theme.h"
+#include "colorscheme.h"
 
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
 #include <QQuickTextDocument>
 #include <QSaveFile>
+#include <QRegularExpression>
+#include <QTextBlock>
+#include <QTextCursor>
 #include <QTextDocument>
 
-Document::Document(const QString &path, Theme *theme, QObject *parent)
-    : QObject(parent), m_path(QFileInfo(path).absoluteFilePath()), m_language(languageFor(path)), m_theme(theme) {
+Document::Document(const QString &path, ColorScheme *scheme, QObject *parent)
+    : QObject(parent), m_path(QFileInfo(path).absoluteFilePath()), m_language(languageFor(path)), m_scheme(scheme) {
     m_watcher.addPath(m_path);
     connect(&m_watcher, &QFileSystemWatcher::fileChanged, this, [this] {
         // Editors and git replace files; keep watching the new one.
@@ -33,6 +36,24 @@ QString Document::name() const { return QFileInfo(m_path).fileName(); }
 
 bool Document::dirty() const { return m_document && m_document->isModified(); }
 
+bool Document::isImageFile(const QString &path) {
+    static const QStringList images{"png", "jpg", "jpeg", "gif", "webp", "bmp", "ico", "avif", "tif", "tiff"};
+    return images.contains(QFileInfo(path).suffix().toLower());
+}
+
+bool Document::previewable() const {
+    const auto suffix = QFileInfo(m_path).suffix().toLower();
+    return m_language == "html" || m_language == "markdown" || suffix == "svg" || isImage();
+}
+
+int Document::lineAt(int position) const {
+    return m_document ? m_document->findBlock(position).blockNumber() : 0;
+}
+
+int Document::columnAt(int position) const {
+    return m_document ? position - m_document->findBlock(position).position() : 0;
+}
+
 QString Document::text() const { return m_document ? m_document->toPlainText() : QString(); }
 
 void Document::setError(const QString &error) {
@@ -50,12 +71,16 @@ void Document::attachDocument(QTextDocument *document) {
         return;
     m_document = document;
     connect(document, &QTextDocument::modificationChanged, this, &Document::dirtyChanged);
-    if (m_theme)
-        m_highlighter = new Highlighter(m_language, m_theme, document);
+    if (m_scheme)
+        m_highlighter = new Highlighter(m_language, m_scheme, document);
     load();
 }
 
 bool Document::load() {
+    if (isImage()) {
+        emit reloaded();
+        return true;
+    }
     QFile file(m_path);
     if (!file.open(QIODevice::ReadOnly)) {
         setError(tr("Impossible de lire « %1 ».").arg(name()));
@@ -78,17 +103,38 @@ bool Document::load() {
     }
     if (!m_error.isEmpty())
         setError({});
+    emit reloaded();
     return true;
 }
 
 void Document::reload() {
-    if (m_document)
+    if (m_document || isImage())
         load();
 }
 
-bool Document::save() {
+bool Document::save(bool trimTrailing, bool finalNewline) {
     if (!m_document || !m_error.isEmpty())
         return false;
+    if (trimTrailing || finalNewline) {
+        QTextCursor cursor(m_document);
+        cursor.beginEditBlock();
+        if (trimTrailing) {
+            static const QRegularExpression trailing("[ \t]+$");
+            for (auto block = m_document->begin(); block.isValid(); block = block.next()) {
+                const auto match = trailing.match(block.text());
+                if (match.hasMatch()) {
+                    cursor.setPosition(block.position() + int(match.capturedStart()));
+                    cursor.setPosition(block.position() + int(match.capturedEnd()), QTextCursor::KeepAnchor);
+                    cursor.removeSelectedText();
+                }
+            }
+        }
+        if (finalNewline && !m_document->isEmpty() && !m_document->toPlainText().endsWith('\n')) {
+            cursor.movePosition(QTextCursor::End);
+            cursor.insertText("\n");
+        }
+        cursor.endEditBlock();
+    }
     // Write beside the file, then rename over it: a crash never leaves half a file.
     m_saving = true;
     QSaveFile file(m_path);
@@ -154,7 +200,7 @@ QString Document::commentFor(const QString &language) {
 
 // ---------------------------------------------------------------- DocumentList
 
-DocumentList::DocumentList(Theme *theme, QObject *parent) : QAbstractListModel(parent), m_theme(theme) {}
+DocumentList::DocumentList(ColorScheme *scheme, QObject *parent) : QAbstractListModel(parent), m_scheme(scheme) {}
 
 int DocumentList::rowCount(const QModelIndex &parent) const {
     return parent.isValid() ? 0 : int(m_documents.size());
@@ -214,7 +260,8 @@ int DocumentList::open(const QString &path) {
     if (index < 0) {
         if (!QFileInfo(path).isFile())
             return -1;
-        auto *d = new Document(path, m_theme, this);
+        // Pictures are viewed, not edited, so they never need a text document.
+        auto *d = new Document(path, m_scheme, this);
         connect(d, &Document::dirtyChanged, this, [this, d] {
             const int row = int(m_documents.indexOf(d));
             if (row >= 0)

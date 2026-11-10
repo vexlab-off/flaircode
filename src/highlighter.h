@@ -6,7 +6,7 @@
 #include <QTextCharFormat>
 #include <QVector>
 
-class Theme;
+class ColorScheme;
 
 // Colours code by pattern: keywords, strings, numbers, comments, calls, and
 // the markup of HTML, CSS, JSON and Markdown. Not a parser — fast, forgiving,
@@ -15,7 +15,7 @@ class Highlighter : public QSyntaxHighlighter {
     Q_OBJECT
 
 public:
-    Highlighter(const QString &language, Theme *theme, QTextDocument *document);
+    Highlighter(const QString &language, ColorScheme *scheme, QTextDocument *document);
 
     struct Rule {
         QRegularExpression pattern;
@@ -40,6 +40,6 @@ protected:
 
 private:
     Grammar m_grammar;
-    Theme *m_theme;
+    ColorScheme *m_scheme;
     QHash<QString, QTextCharFormat> m_formats;
 };
