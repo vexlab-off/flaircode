@@ -207,6 +207,28 @@ Popup {
                     spacing: 18
                     Heading { title: "Apparence"; intro: "Le thème des couleurs du code et la couleur d'accent de l'interface (onglet actif, curseur, boutons, logo)." }
 
+                    Setting {
+                        label: "Mode"
+                        help: "Clair ou sombre pour toute l'interface. « Comme flair » suit le réglage de flair ; « Automatique » suit Vex. Le thème « Vex » de l'éditeur s'adapte aussi."
+                    }
+                    Row {
+                        spacing: 8
+                        Repeater {
+                            model: [["flair", "Comme flair", "sparkle"], ["auto", "Automatique", "refresh"], ["light", "Clair", "sun"], ["dark", "Sombre", "moon"]]
+                            delegate: Rectangle {
+                                required property var modelData
+                                readonly property bool chosen: dialog.v("appearance/mode") === modelData[0]
+                                width: modeRow.implicitWidth + 24; height: 34; radius: 17
+                                color: chosen ? theme.alpha(theme.highlight, 0.16) : theme.background
+                                border.color: chosen ? theme.highlight : theme.line
+                                Row { id: modeRow; anchors.centerIn: parent; spacing: 8
+                                    Icon { anchors.verticalCenter: parent.verticalCenter; name: modelData[2]; size: 15; color: parent.parent.chosen ? theme.highlight : theme.textDim }
+                                    Text { anchors.verticalCenter: parent.verticalCenter; text: modelData[1]; color: theme.text; font.pixelSize: 12 } }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: settings.set("appearance/mode", modelData[0]) }
+                            }
+                        }
+                    }
+                    Divider {}
                     Text { text: "Thème de l'éditeur"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
                     GridLayout {
                         Layout.fillWidth: true

@@ -24,7 +24,7 @@ Rectangle {
             const size = 10
             for (let y = 0; y < height; y += size)
                 for (let x = 0; x < width; x += size) {
-                    ctx.fillStyle = ((x + y) / size) % 2 === 0 ? "#2a2a2e" : "#1f1f23"
+                    ctx.fillStyle = ((x + y) / size) % 2 === 0 ? theme.raised : theme.surface
                     ctx.fillRect(x, y, size, size)
                 }
         }

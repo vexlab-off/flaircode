@@ -57,6 +57,8 @@ Item {
         expand: "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5",
         shrink: "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5",
         minus: "M5 12h14",
+        sun: "M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4",
+        moon: "M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z",
         terminal: "M4.5 4h15A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5v-13A1.5 1.5 0 0 1 4.5 4zM7 9l3 3-3 3M12.5 15H17",
         copy: "M9 9h10.5v11.5H9zM15 9V5.5A1.5 1.5 0 0 0 13.5 4h-8A1.5 1.5 0 0 0 4 5.5v8A1.5 1.5 0 0 0 5.5 15H9",
         pencil: "M4 20l1-4.5L16 4.5a2.1 2.1 0 0 1 3 3L8 18.5zM14 7l3 3",
@@ -72,7 +74,7 @@ Item {
     readonly property bool filled: isBrand || name === "github"
     readonly property real unit: isBrand ? 24 : (filled ? 16 : 24)
     // Logos whose brand colour is too dark for the window take the text colour.
-    readonly property color fillColor: isBrand ? (brand.dark ? theme.text : brand.color) : icon.color
+    readonly property color fillColor: isBrand ? (brand.dark ? theme.text : theme.readable(brand.color)) : icon.color
 
     Shape {
         width: icon.unit

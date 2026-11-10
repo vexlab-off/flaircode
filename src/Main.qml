@@ -16,7 +16,7 @@ ApplicationWindow {
            + (workspace.root ? workspace.name + " — " : "") + "Flair Code"
     color: theme.background
 
-    Material.theme: Material.Dark
+    Material.theme: theme.isDark ? Material.Dark : Material.Light
     Material.accent: theme.highlight
     Material.background: theme.surface
     Material.foreground: theme.text
@@ -242,7 +242,7 @@ ApplicationWindow {
                                 name: node.isDir ? "folder" : (node.isImage ? "image" : "file")
                                 brand: node.brand
                                 size: 14
-                                color: node.isDir ? theme.highlight : (node.isImage ? theme.kindColor("image") : theme.textDim)
+                                color: node.isDir ? theme.kindColor("dossier") : (node.isImage ? theme.kindColor("image") : theme.textDim)
                             }
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter

@@ -32,6 +32,9 @@ static void followAccent(Theme *theme, EditorSettings *settings, QFileSystemWatc
     auto apply = [theme, settings, watcher, file] {
         QSettings flairSettings(file, QSettings::IniFormat);
         theme->setLogoStyle(flairSettings.value("appearance/logoStyle", "plein").toString());
+        theme->setFolderColor(flairSettings.value("appearance/folderColor", "accent").toString());
+        const auto mode = settings->value("appearance/mode").toString();
+        theme->setMode(mode == "flair" ? flairSettings.value("appearance/mode", "auto").toString() : mode);
         const auto own = settings->value("appearance/accent").toString();
         if (own != "flair") {
             theme->setOverride(own);

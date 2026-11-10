@@ -13,6 +13,7 @@ QVariant EditorSettings::defaultValue(const QString &key) {
         // Appearance
         {"appearance/scheme", "vex"},
         {"appearance/accent", "flair"}, // "flair" follows flair's accent, else #rrggbb
+        {"appearance/mode", "flair"},   // "flair", "auto", "light" or "dark"
         // Editor
         {"editor/fontFamily", ""}, // empty: first coding font installed
         {"editor/fontSize", 14},

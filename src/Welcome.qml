@@ -78,7 +78,7 @@ Rectangle {
                         anchors.leftMargin: 10
                         anchors.rightMargin: 10
                         spacing: 12
-                        Icon { name: "folder"; size: 17; color: theme.highlight }
+                        Icon { name: "folder"; size: 17; color: theme.kindColor("dossier") }
                         ColumnLayout {
                             Layout.fillWidth: true
                             spacing: 1
