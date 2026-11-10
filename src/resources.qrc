@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="Main.qml">Main.qml</file>
+        <file alias="Editor.qml">Editor.qml</file>
+        <file alias="FindBar.qml">FindBar.qml</file>
+        <file alias="QuickOpen.qml">QuickOpen.qml</file>
+        <file alias="Welcome.qml">Welcome.qml</file>
+        <file alias="HelpOverlay.qml">HelpOverlay.qml</file>
+        <file alias="Logo.qml">Logo.qml</file>
+        <file alias="Icon.qml">Icon.qml</file>
+        <file alias="Keycap.qml">Keycap.qml</file>
+        <file alias="brands.js">brands.js</file>
+    </qresource>
+</RCC>

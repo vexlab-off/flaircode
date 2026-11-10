@@ -1,0 +1,42 @@
+import QtQuick
+import QtQuick.Shapes
+
+// The Flair Code mark: code brackets around flair's spark. Drawn in the
+// suite accent; pkgbuild/flaircode.svg is the same drawing in orange.
+Item {
+    id: logo
+    property real size: 28
+    property color tile: theme.highlight
+    readonly property color ink: "#1b120b"
+    readonly property color spark: "#fff3e8"
+
+    implicitWidth: size
+    implicitHeight: size
+
+    Rectangle {
+        anchors.fill: parent
+        radius: logo.size * 0.235
+        color: logo.tile
+    }
+
+    Shape {
+        width: 256
+        height: 256
+        scale: logo.size / 256
+        transformOrigin: Item.TopLeft
+        preferredRendererType: Shape.CurveRenderer
+        ShapePath {
+            strokeColor: logo.ink
+            strokeWidth: 26
+            fillColor: "transparent"
+            capStyle: ShapePath.RoundCap
+            joinStyle: ShapePath.RoundJoin
+            PathSvg { path: "M92 72L44 128l48 56M164 72l48 56-48 56" }
+        }
+        ShapePath {
+            strokeColor: "transparent"
+            fillColor: logo.spark
+            PathSvg { path: "M128 76C131.6 108 143 119.4 175 123C143 126.6 131.6 138 128 170C124.4 138 113 126.6 81 123C113 119.4 124.4 108 128 76z" }
+        }
+    }
+}

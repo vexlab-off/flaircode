@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Flair Code
+GenericName=Éditeur de code
+Comment=L'éditeur de code de la suite flair
+Keywords=code;éditeur;editor;programmation;développement;
+Exec=flaircode %F
+TryExec=flaircode
+Icon=/usr/share/icons/hicolor/scalable/apps/flaircode.svg
+Terminal=false
+Categories=Development;TextEditor;IDE;Utility;
+MimeType=text/plain;text/x-c++src;text/x-c++hdr;text/x-csrc;text/x-chdr;text/x-python;text/x-shellscript;text/markdown;text/css;application/json;application/javascript;application/x-yaml;text/x-qml;inode/directory;
+StartupWMClass=flaircode
+StartupNotify=true
