@@ -49,10 +49,8 @@ Rectangle {
             spacing: 10
             RowLayout {
                 spacing: 10
-                Button {
+                PrimaryButton {
                     text: "Ouvrir un dossier"
-                    highlighted: true
-                    Material.accent: theme.highlight
                     onClicked: workspace.pickFolder()
                 }
                 Button { text: "Ouvrir un chemin…"; flat: true; onClicked: prompt.ask("path") }

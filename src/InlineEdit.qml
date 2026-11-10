@@ -135,10 +135,8 @@ Popup {
                 enabled: !assistant.inlineBusy
                 onClicked: inline.run()
             }
-            Button {
+            PrimaryButton {
                 text: assistant.inlineResult ? "Accepter" : "Générer"
-                highlighted: true
-                Material.accent: theme.highlight
                 enabled: !assistant.inlineBusy && instruction.text.trim() !== ""
                 onClicked: assistant.inlineResult ? inline.accept() : inline.run()
             }

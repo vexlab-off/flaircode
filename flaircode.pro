@@ -12,6 +12,7 @@ HEADERS += \
     src/snippets.h \
     src/document.h \
     src/highlighter.h \
+    src/launcher.h \
     src/theme.h \
     src/workspace.h
 
@@ -24,6 +25,7 @@ SOURCES += \
     src/snippets.cpp \
     src/document.cpp \
     src/highlighter.cpp \
+    src/launcher.cpp \
     src/theme.cpp \
     src/workspace.cpp
 

@@ -30,6 +30,8 @@
 static void followAccent(Theme *theme, EditorSettings *settings, QFileSystemWatcher *watcher) {
     const auto file = QDir::homePath() + "/.config/flair/flair.conf";
     auto apply = [theme, settings, watcher, file] {
+        QSettings flairSettings(file, QSettings::IniFormat);
+        theme->setLogoStyle(flairSettings.value("appearance/logoStyle", "plein").toString());
         const auto own = settings->value("appearance/accent").toString();
         if (own != "flair") {
             theme->setOverride(own);

@@ -556,7 +556,7 @@ ApplicationWindow {
             background: null
             Button { text: "Ne pas enregistrer"; flat: true; DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole }
             Button { text: "Annuler"; flat: true; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-            Button { text: "Enregistrer"; highlighted: true; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
+            PrimaryButton { text: "Enregistrer"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
             onClicked: (button) => {
                 const role = button.DialogButtonBox.buttonRole
                 const doc = documents.at(confirmClose.index)
@@ -580,7 +580,7 @@ ApplicationWindow {
             background: null
             Button { text: "Quitter sans enregistrer"; flat: true; DialogButtonBox.buttonRole: DialogButtonBox.DestructiveRole }
             Button { text: "Annuler"; flat: true; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-            Button { text: "Tout enregistrer"; highlighted: true; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
+            PrimaryButton { text: "Tout enregistrer"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
             onClicked: (button) => {
                 const role = button.DialogButtonBox.buttonRole
                 confirmQuit.close()

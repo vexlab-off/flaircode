@@ -6,9 +6,11 @@ import QtQuick.Shapes
 Item {
     id: logo
     property real size: 28
-    property color tile: theme.highlight
-    readonly property color ink: "#1b120b"
-    readonly property color spark: "#fff3e8"
+    property string variant: ""
+    readonly property var colors: (theme.highlight, theme.logoStyle, theme.logoColors("flaircode", variant))
+    readonly property color tile: colors.tile
+    readonly property color ink: colors.front
+    readonly property color spark: colors.spark
 
     implicitWidth: size
     implicitHeight: size
