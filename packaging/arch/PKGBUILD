@@ -13,7 +13,7 @@ optdepends=("git: branche courante dans la barre d'état"
             'ttf-jetbrains-mono-nerd: la police de code préférée')
 makedepends=('gcc' 'make')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('85b3d241a42740ce38def486445b45aaaa5ed280d96164cbeb3c99be7c8c969c')
 
 build() {
   cd "$pkgname-$pkgver"
