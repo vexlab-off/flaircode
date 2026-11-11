@@ -30,18 +30,18 @@
 static void followAccent(Theme *theme, EditorSettings *settings, QFileSystemWatcher *watcher) {
     const auto file = QDir::homePath() + "/.config/flair/flair.conf";
     auto apply = [theme, settings, watcher, file] {
-        QSettings flairSettings(file, QSettings::IniFormat);
-        theme->setLogoStyle(flairSettings.value("appearance/logoStyle", "plein").toString());
-        theme->setFolderColor(flairSettings.value("appearance/folderColor", "accent").toString());
-        const auto mode = settings->value("appearance/mode").toString();
-        theme->setMode(mode == "flair" ? flairSettings.value("appearance/mode", "auto").toString() : mode);
-        const auto own = settings->value("appearance/accent").toString();
-        if (own != "flair") {
-            theme->setOverride(own);
-        } else {
-            QSettings flair(file, QSettings::IniFormat);
-            theme->setOverride(flair.value("appearance/accent", "#ff8a3d").toString());
-        }
+        // In sync, the suite's colours come from flair's settings; otherwise
+        // Flair Code's own (where "flair" still means "like flair").
+        QSettings flair(file, QSettings::IniFormat);
+        const bool sync = flair.value("appearance/sync", "true").toString() == "true";
+        theme->setLogoStyle(flair.value("appearance/logoStyle", "plein").toString());
+        theme->setFolderColor(flair.value("appearance/folderColor", "accent").toString());
+        const auto flairAccent = flair.value("appearance/accent", "#ff8a3d").toString();
+        const auto flairMode = flair.value("appearance/mode", "auto").toString();
+        const auto ownAccent = settings->value("appearance/accent").toString();
+        const auto ownMode = settings->value("appearance/mode").toString();
+        theme->setOverride(sync || ownAccent == "flair" ? flairAccent : ownAccent);
+        theme->setMode(sync || ownMode == "flair" ? flairMode : ownMode);
         if (QFileInfo::exists(file) && !watcher->files().contains(file))
             watcher->addPath(file);
     };

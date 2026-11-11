@@ -20,6 +20,13 @@ Popup {
     property string section: "appearance"
     function openAt(name) { section = name || "appearance"; open() }
     function v(key) { return settings.revision, settings.value(key) }
+    // While the suite is synced, appearance is read from and written to flair's settings.
+    readonly property bool synced: (settings.revision, settings.suiteSync())
+    function suite(key, fallback) { return settings.revision, settings.suiteValue(key, fallback) }
+    function accentNow() { return synced ? suite("appearance/accent", "#ff8a3d") : v("appearance/accent") }
+    function setAccent(value) { synced ? settings.setSuiteValue("appearance/accent", value) : settings.set("appearance/accent", value) }
+    function modeNow() { return synced ? suite("appearance/mode", "auto") : v("appearance/mode") }
+    function setMode(value) { synced ? settings.setSuiteValue("appearance/mode", value) : settings.set("appearance/mode", value) }
 
     readonly property var sections: [
         { key: "appearance", label: "Apparence", icon: "eye" },
@@ -208,23 +215,33 @@ Popup {
                     Heading { title: "Apparence"; intro: "Le thème des couleurs du code et la couleur d'accent de l'interface (onglet actif, curseur, boutons, logo)." }
 
                     Setting {
+                        label: "Synchroniser les couleurs de la suite flair"
+                        help: "Couleur d'accent, mode clair/sombre et couleur des dossiers identiques dans flair, Flair Code, Flair Image et Flair Vidéo. Un changement ici s'applique aussi aux autres."
+                        Switch {
+                            Material.accent: theme.highlight
+                            checked: dialog.synced
+                            onToggled: settings.setSuiteSync(checked)
+                        }
+                    }
+                    Setting {
                         label: "Mode"
                         help: "Clair ou sombre pour toute l'interface. « Comme flair » suit le réglage de flair ; « Automatique » suit Vex. Le thème « Vex » de l'éditeur s'adapte aussi."
                     }
                     Row {
                         spacing: 8
                         Repeater {
-                            model: [["flair", "Comme flair", "sparkle"], ["auto", "Automatique", "refresh"], ["light", "Clair", "sun"], ["dark", "Sombre", "moon"]]
+                            model: dialog.synced ? [["auto", "Automatique", "refresh"], ["light", "Clair", "sun"], ["dark", "Sombre", "moon"]]
+                                                 : [["flair", "Comme flair", "sparkle"], ["auto", "Automatique", "refresh"], ["light", "Clair", "sun"], ["dark", "Sombre", "moon"]]
                             delegate: Rectangle {
                                 required property var modelData
-                                readonly property bool chosen: dialog.v("appearance/mode") === modelData[0]
+                                readonly property bool chosen: dialog.modeNow() === modelData[0]
                                 width: modeRow.implicitWidth + 24; height: 34; radius: 17
                                 color: chosen ? theme.alpha(theme.highlight, 0.16) : theme.background
                                 border.color: chosen ? theme.highlight : theme.line
                                 Row { id: modeRow; anchors.centerIn: parent; spacing: 8
                                     Icon { anchors.verticalCenter: parent.verticalCenter; name: modelData[2]; size: 15; color: parent.parent.chosen ? theme.highlight : theme.textDim }
                                     Text { anchors.verticalCenter: parent.verticalCenter; text: modelData[1]; color: theme.text; font.pixelSize: 12 } }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: settings.set("appearance/mode", modelData[0]) }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: dialog.setMode(modelData[0]) }
                             }
                         }
                     }
@@ -290,12 +307,13 @@ Popup {
                     Divider {}
                     Setting {
                         label: "Couleur d'accent"
-                        help: "« Comme flair » reprend la couleur choisie dans les réglages de flair et change avec elle. Sinon, choisis-en une pour Flair Code seul."
+                        help: dialog.synced ? "Partagée par toute la suite flair : la changer ici la change aussi dans flair, Flair Image et Flair Vidéo." : "« Comme flair » reprend la couleur choisie dans les réglages de flair et change avec elle. Sinon, choisis-en une pour Flair Code seul."
                     }
                     Flow {
                         Layout.fillWidth: true
                         spacing: 8
                         Rectangle {
+                            visible: !dialog.synced
                             readonly property bool chosen: dialog.v("appearance/accent") === "flair"
                             width: flairRow.implicitWidth + 20; height: 32; radius: 16
                             color: chosen ? theme.alpha(theme.highlight, 0.16) : theme.background
@@ -309,14 +327,14 @@ Popup {
                             model: [["Orange", "#ff8a3d"], ["Ambre", "#f5b942"], ["Rouge", "#f05252"], ["Rose", "#ec5fa6"], ["Violet", "#9b7bff"], ["Bleu", "#5c9df5"], ["Vert", "#3ecf8e"], ["Turquoise", "#4fd6c4"]]
                             delegate: Rectangle {
                                 required property var modelData
-                                readonly property bool chosen: dialog.v("appearance/accent") === modelData[1]
+                                readonly property bool chosen: dialog.accentNow() === modelData[1]
                                 width: swRow.implicitWidth + 20; height: 32; radius: 16
                                 color: chosen ? theme.alpha(modelData[1], 0.16) : theme.background
                                 border.color: chosen ? modelData[1] : theme.line
                                 Row { id: swRow; anchors.centerIn: parent; spacing: 8
                                     Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 14; height: 14; radius: 7; color: modelData[1] }
                                     Text { anchors.verticalCenter: parent.verticalCenter; text: modelData[0]; color: theme.text; font.pixelSize: 12 } }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: settings.set("appearance/accent", modelData[1]) }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: dialog.setAccent(modelData[1]) }
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QFileSystemWatcher>
 #include <QSettings>
 #include <QVariantMap>
 
@@ -32,10 +33,19 @@ public:
 
     static QVariant defaultValue(const QString &key);
 
+    // The suite's shared colours live in flair's settings; while synced,
+    // Flair Code reads and writes them there.
+    Q_INVOKABLE bool suiteSync() const;
+    Q_INVOKABLE void setSuiteSync(bool sync);
+    Q_INVOKABLE QString suiteValue(const QString &key, const QString &fallback = {}) const;
+    Q_INVOKABLE void setSuiteValue(const QString &key, const QString &value);
+    static QString suiteFile();
+
 signals:
     void changed();
 
 private:
     QSettings m_settings;
+    QFileSystemWatcher m_suiteWatcher;
     int m_revision = 0;
 };

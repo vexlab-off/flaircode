@@ -2,11 +2,47 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QHash>
 
 EditorSettings::EditorSettings(const QString &file, QObject *parent)
     : QObject(parent),
-      m_settings(file.isEmpty() ? QDir::homePath() + "/.config/flaircode/flaircode.conf" : file, QSettings::IniFormat) {}
+      m_settings(file.isEmpty() ? QDir::homePath() + "/.config/flaircode/flaircode.conf" : file, QSettings::IniFormat) {
+    // flair may change the suite's colours at any time; views re-read them.
+    const auto suite = suiteFile();
+    QDir().mkpath(QFileInfo(suite).absolutePath());
+    m_suiteWatcher.addPath(QFileInfo(suite).absolutePath());
+    if (QFileInfo::exists(suite))
+        m_suiteWatcher.addPath(suite);
+    auto bump = [this, suite] {
+        if (QFileInfo::exists(suite) && !m_suiteWatcher.files().contains(suite))
+            m_suiteWatcher.addPath(suite);
+        ++m_revision;
+        emit changed();
+    };
+    connect(&m_suiteWatcher, &QFileSystemWatcher::fileChanged, this, bump);
+    connect(&m_suiteWatcher, &QFileSystemWatcher::directoryChanged, this, bump);
+}
+
+QString EditorSettings::suiteFile() { return QDir::homePath() + "/.config/flair/flair.conf"; }
+
+QString EditorSettings::suiteValue(const QString &key, const QString &fallback) const {
+    QSettings suite(suiteFile(), QSettings::IniFormat);
+    const auto value = suite.value(key).toString().trimmed();
+    return value.isEmpty() ? fallback : value;
+}
+
+void EditorSettings::setSuiteValue(const QString &key, const QString &value) {
+    QSettings suite(suiteFile(), QSettings::IniFormat);
+    suite.setValue(key, value);
+    suite.sync();
+    QFile::setPermissions(suite.fileName(), QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+    ++m_revision;
+    emit changed();
+}
+
+bool EditorSettings::suiteSync() const { return suiteValue("appearance/sync", "true") == "true"; }
+void EditorSettings::setSuiteSync(bool sync) { setSuiteValue("appearance/sync", sync ? "true" : "false"); }
 
 QVariant EditorSettings::defaultValue(const QString &key) {
     static const QHash<QString, QVariant> defaults{
