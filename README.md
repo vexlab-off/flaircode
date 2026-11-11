@@ -5,7 +5,7 @@ L'éditeur de code de la suite flair : la même identité, le même thème, et u
 
 ![Flair Code : l'arborescence d'un projet et un fichier JavaScript coloré](docs/capture.webp)
 
-Une application de [la suite flair](https://vexlab-off.github.io/mon-portfolio/flair/), avec [flair](https://github.com/vexlab-off/flair),
+Une application de [la suite flair](https://vexlab-off.github.io/flair/), avec [flair](https://github.com/vexlab-off/flair),
 [Flair Code](https://github.com/vexlab-off/flaircode) et [Flair Web](https://github.com/vexlab-off/flairweb).
 
 ## Installer
