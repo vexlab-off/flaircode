@@ -1,9 +1,12 @@
-pkgname=flaircode
+pkgname=flair-code
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="L'éditeur de code de la suite flair"
 arch=('x86_64' 'aarch64')
 license=('MIT')
+provides=('flaircode')
+conflicts=('flaircode')
+replaces=('flaircode')
 depends=('qt6-base' 'qt6-declarative' 'qt6-webengine' 'qt6-wayland' 'xdg-desktop-portal')
 optdepends=("git: branche courante dans la barre d'état"
             'ttf-jetbrains-mono-nerd: la police de code préférée')

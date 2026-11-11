@@ -1,4 +1,4 @@
-pkgbase = flaircode
+pkgbase = flair-code
 	pkgdesc = Éditeur de code de la suite flair, avec assistant IA et aperçu en direct
 	pkgver = 0.1.0
 	pkgrel = 1
@@ -15,7 +15,10 @@ pkgbase = flaircode
 	depends = xdg-desktop-portal
 	optdepends = git: branche courante dans la barre d'état
 	optdepends = ttf-jetbrains-mono-nerd: la police de code préférée
+	provides = flaircode
+	conflicts = flaircode
+	replaces = flaircode
 	source = flaircode-0.1.0.tar.gz::https://github.com/vexlab-off/flaircode/archive/refs/tags/v0.1.0.tar.gz
 	sha256sums = 85b3d241a42740ce38def486445b45aaaa5ed280d96164cbeb3c99be7c8c969c
 
-pkgname = flaircode
+pkgname = flair-code

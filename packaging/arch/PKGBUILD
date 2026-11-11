@@ -1,22 +1,26 @@
 # Maintainer: vex <https://github.com/vexlab-off>
 # Paquet de publication : construit depuis l'archive de la version sur GitHub.
 # (pkgbuild/PKGBUILD, lui, construit le dossier local pour bin/install.)
-pkgname=flaircode
+pkgname=flair-code
+_repo=flaircode
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="Éditeur de code de la suite flair, avec assistant IA et aperçu en direct"
 arch=('x86_64' 'aarch64')
-url="https://github.com/vexlab-off/flaircode"
+url="https://github.com/vexlab-off/$_repo"
 license=('MIT')
+provides=('flaircode')
+conflicts=('flaircode')
+replaces=('flaircode')
 depends=('qt6-base' 'qt6-declarative' 'qt6-webengine' 'qt6-wayland' 'xdg-desktop-portal')
 optdepends=("git: branche courante dans la barre d'état"
             'ttf-jetbrains-mono-nerd: la police de code préférée')
 makedepends=('gcc' 'make')
-source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+source=("$_repo-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('85b3d241a42740ce38def486445b45aaaa5ed280d96164cbeb3c99be7c8c969c')
 
 build() {
-  cd "$pkgname-$pkgver"
+  cd "$_repo-$pkgver"
   mkdir -p build
   cd build
   qmake6 ../flaircode.pro
@@ -24,7 +28,7 @@ build() {
 }
 
 check() {
-  cd "$pkgname-$pkgver"
+  cd "$_repo-$pkgver"
   mkdir -p build/tests
   cd build/tests
   qmake6 ../../tests/flaircode_tests.pro
@@ -33,7 +37,7 @@ check() {
 }
 
 package() {
-  cd "$pkgname-$pkgver"
+  cd "$_repo-$pkgver"
   install -Dm755 build/flaircode "$pkgdir/usr/bin/flaircode"
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
