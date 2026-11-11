@@ -1,0 +1,45 @@
+# Maintainer: vex <https://github.com/vexlab-off>
+# Paquet de publication : construit depuis l'archive de la version sur GitHub.
+# (pkgbuild/PKGBUILD, lui, construit le dossier local pour bin/install.)
+pkgname=flaircode
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Éditeur de code de la suite flair, avec assistant IA et aperçu en direct"
+arch=('x86_64' 'aarch64')
+url="https://github.com/vexlab-off/flaircode"
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative' 'qt6-webengine' 'qt6-wayland' 'xdg-desktop-portal')
+optdepends=("git: branche courante dans la barre d'état"
+            'ttf-jetbrains-mono-nerd: la police de code préférée')
+makedepends=('gcc' 'make')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  mkdir -p build
+  cd build
+  qmake6 ../flaircode.pro
+  make
+}
+
+check() {
+  cd "$pkgname-$pkgver"
+  mkdir -p build/tests
+  cd build/tests
+  qmake6 ../../tests/flaircode_tests.pro
+  make
+  QT_QPA_PLATFORM=offscreen ./flaircode_tests
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 build/flaircode "$pkgdir/usr/bin/flaircode"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm644 pkgbuild/flaircode.desktop "$pkgdir/usr/share/applications/flaircode.desktop"
+  install -Dm644 pkgbuild/flaircode.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/flaircode.svg"
+  for size in 16 24 32 48 64 128 256 512; do
+    install -Dm644 "pkgbuild/icons/flaircode-$size.png" "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/flaircode.png"
+  done
+}

@@ -3,6 +3,31 @@
 L'éditeur de code de la suite flair : la même identité, le même thème, et une application
 à part qui s'utilise toute seule.
 
+![Flair Code : l'arborescence d'un projet et un fichier JavaScript coloré](docs/capture.webp)
+
+Une application de [la suite flair](https://vexlab-off.github.io/mon-portfolio/flair/), avec [flair](https://github.com/vexlab-off/flair),
+[Flair Code](https://github.com/vexlab-off/flaircode) et [Flair Web](https://github.com/vexlab-off/flairweb).
+
+## Installer
+
+Sur Arch Linux et ses dérivées, avec le paquet de la
+[dernière version](https://github.com/vexlab-off/flaircode/releases/latest) :
+
+```sh
+sudo pacman -U flaircode-0.1.0-1-x86_64.pkg.tar.zst
+```
+
+Ou en construisant le paquet soi-même depuis les sources de la version :
+
+```sh
+git clone https://github.com/vexlab-off/flaircode
+cd flaircode/packaging/arch
+makepkg -si
+```
+
+Il faut Qt 6 (base, declarative, webengine, wayland) et xdg-desktop-portal. En option : git, la police JetBrains Mono.
+
+
 - Arborescence du projet, onglets, un éditeur par fichier avec son propre historique
   d'annulation.
 - Coloration syntaxique de C/C++, QML, JavaScript/TypeScript, Python, Rust, Go, Java,
@@ -99,3 +124,7 @@ bin/install    # paquet Arch : lanceur, icône
 
 `FLAIRCODE_SNAPSHOT=capture.png QT_QPA_PLATFORM=offscreen build/flaircode fichier` enregistre
 une image de la fenêtre sans l'afficher, pour vérifier l'interface.
+
+## Licence
+
+MIT, voir [LICENSE](LICENSE). La suite flair est créée par vex.
